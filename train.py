@@ -118,9 +118,12 @@ def train_model():
 
 def test_training():
     device = global_args.gpu
+    if global_args.gpu == 'cuda':
+        device =  global_args.gpu if torch.cuda.is_available() else 'cpu
+    
+    
     test_loss = 0
     accuracy = 0
-    #data_dir = 'flowers' # to be imported
     data_dir = global_args.data_dir
 
     criterion = nn.NLLLoss()
