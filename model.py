@@ -11,12 +11,15 @@ class Model():
     def __init__(self):
         pass
 
-    def get_model(self,hidden_units,file_name=""):
-        if file_name == "":
+    def get_model(self,hidden_units,arch_name="vgg11"):
+        if arch_name == "vgg11":
             self.model = models.vgg11(pretrained=True)
-            self.__disable_grads()
-            self.model.classifier = self.__get_classifier(hidden_units)
-            torch.save(self.model,'vgg11.pth')
+        elif arch_name == "vgg13":
+            self.model = models.vgg13(pretrained=True)
+
+        self.__disable_grads()
+        self.model.__get_classifier(hidden_units)
+        torch.save(self.model, arch_name + '.pth')
             
         return self.model
 
@@ -25,7 +28,8 @@ class Model():
             param.requires_grad = False
 
     def __get_classifier(self,hidden_units):
-        return nn.Sequential(nn.Linear(25088, hidden_units),
+        input_size = model.classifier[0].in_features
+        return nn.Sequential(nn.Linear(input_size, hidden_units),
                                  nn.ReLU(),
                                  nn.Dropout(0.2),
                                  nn.Linear(hidden_units, hidden_units),

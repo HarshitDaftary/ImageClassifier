@@ -51,17 +51,18 @@ def train_model():
     with open('cat_to_name.json', 'r') as f:
         cat_to_name = json.load(f)
 
-    device = global_args.gpu 
+    device = global_args.gpu        
+    if global_args.gpu == 'cuda':
+        device =  global_args.gpu if torch.cuda.is_available() else 'cpu'
+            
     data_dir = global_args.data_dir 
     learn_rate = global_args.learning_rate 
     
     print(f'device -> {device}')
     print(f"data_dir -> {data_dir}")
-    print(f"learn_rate -> {learn_rate}")
-    
+    print(f"learn_rate -> {learn_rate}")    
     print("Moving model to " + device)
     model.to(device);
-    print("Preparing Training Data")
     trainloader, testloader, validationloader = prepare_training_data(data_dir)
 
     criterion = nn.NLLLoss()
@@ -158,17 +159,18 @@ def persist_model():
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data_dir", type=str,help="Enter Data Directory",required=True,default="flowers")
-    parser.add_argument("-o", "--save_dir", type=str,help="Output Model Directory",required=True,default="")
+    parser.add_argument("-d", "--data_dir", type=str,help="Enter Data Directory",required=True)
+    parser.add_argument("-o", "--save_dir", type=str,help="Output Model Directory",required=True)
     parser.add_argument("-lr", "--learning_rate", type=float,help="Learning rate",required=False,default=0.003)
     parser.add_argument("-hu", "--hidden_units", type=int,help="Number of Hidden units",required=False,default=158)
     parser.add_argument("-e", "--epochs", type=int,help="Number of epochs",required=False,default=1)
     parser.add_argument("-gpu", "--gpu", choices=['cpu','cuda'],default='cpu', required=False) 
+    parser.add_argument("-arch", "--arch", choices=['vgg11','vgg13'], required=True)
     
     global_args = parser.parse_args()
     
     model_loader = Model()
-    model = model_loader.get_model(global_args.hidden_units)
+    model = model_loader.get_model(global_args.hidden_units,arch_name=global_args.arch)
     
     train_model()
     test_training()

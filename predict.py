@@ -14,10 +14,14 @@ import json
 from model import Model
 
 
-def load_checkpoint(filepath):
+def load_checkpoint(filepath,arch):
     checkpoint = torch.load(filepath)
     
-    model = models.vgg11(pretrained=True)    
+    if arch == "vgg11":
+        model = models.vgg11(pretrained=True)    
+    if arch == "vgg13":
+        model = models.vgg13(pretrained=True)    
+        
     model.classifier = checkpoint ['classifier']
     model.load_state_dict (checkpoint ['state_dict'])
     model.class_to_idx = checkpoint ['mapping']
@@ -94,7 +98,8 @@ if __name__ == "__main__":
     parser.add_argument("-tk", "--top_k", type=int,help="Number of results",required=False,default=3)
     parser.add_argument("-cat", "--category_names", type=str,help="Category name json file",required=True)
     parser.add_argument("-gpu", "--gpu", choices=['cpu','cuda'],default='cpu', required=False) 
-    
+    parser.add_argument("-arch", "--arch", choices=['vgg11','vgg13'], required=True)
+
     global_args = parser.parse_args()
     
     model = load_checkpoint(global_args.checkpoint)
