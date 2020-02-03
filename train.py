@@ -119,7 +119,7 @@ def train_model():
 def test_training():
     device = global_args.gpu
     if global_args.gpu == 'cuda':
-        device =  global_args.gpu if torch.cuda.is_available() else 'cpu
+        device =  global_args.gpu if torch.cuda.is_available() else 'cpu'
     
     
     test_loss = 0

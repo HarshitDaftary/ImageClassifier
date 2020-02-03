@@ -18,7 +18,7 @@ class Model():
             self.model = models.vgg13(pretrained=True)
 
         self.__disable_grads()
-        self.model.__get_classifier(hidden_units)
+        self.model.classifier = self.__get_classifier(hidden_units)
         torch.save(self.model, arch_name + '.pth')
             
         return self.model
@@ -28,7 +28,7 @@ class Model():
             param.requires_grad = False
 
     def __get_classifier(self,hidden_units):
-        input_size = model.classifier[0].in_features
+        input_size = self.model.classifier[0].in_features
         return nn.Sequential(nn.Linear(input_size, hidden_units),
                                  nn.ReLU(),
                                  nn.Dropout(0.2),
